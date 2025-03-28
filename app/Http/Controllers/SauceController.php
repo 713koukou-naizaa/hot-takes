@@ -36,17 +36,16 @@ class SauceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'userId' => 'required|string',
-            'name' => 'required|string',
-            'manufacturer' => 'required|string',
-            'description' => 'required|string',
-            'mainPepper' => 'required|string',
-            'imageUrl' => 'required|string',
-            'heat' => 'required|integer|min:1|max:10',
+            'sauce' => 'required|string',
+            'image' => 'required|file|mimes:jpeg,png,jpg,gif',
         ]);
-
-        $sauce = Sauce::create($validated);
-        return response()->json($sauce, 201);
+    
+        $sauceData = json_decode($validated['sauce'], true);
+        $sauceData['imageUrl'] = $request->file('image')->store('images', 'public');
+    
+        $sauce = Sauce::create($sauceData);
+    
+        return response()->json(['message' => 'Sauce created successfully'], 201);
     }
 
     /**
@@ -62,17 +61,19 @@ class SauceController extends Controller
      */
     public function update(Request $request, Sauce $sauce)
     {
-        $validated = $request->validate([
-            'name' => 'string',
-            'manufacturer' => 'string',
-            'description' => 'string',
-            'mainPepper' => 'string',
-            'imageUrl' => 'string',
-            'heat' => 'integer|min:1|max:10',
-        ]);
+        $sauce = Sauce::findOrFail($id);
 
-        $sauce->update($validated);
-        return response()->json($sauce);
+        if ($request->has('sauce')) {
+            $sauceData = json_decode($request->input('sauce'), true);
+            $sauce->update($sauceData);
+        }
+    
+        if ($request->hasFile('image')) {
+            $sauce->imageUrl = $request->file('image')->store('images', 'public');
+            $sauce->save();
+        }
+    
+        return response()->json(['message' => 'Sauce updated successfully']);
     }
 
     /**
@@ -83,4 +84,35 @@ class SauceController extends Controller
         $sauce->delete();
         return response()->json(['message' => 'Sauce deleted successfully']);
     }
+
+    public function like(Request $request, $id)
+{
+    $validated = $request->validate([
+        'userId' => 'required|string',
+        'like' => 'required|integer|in:-1,0,1',
+    ]);
+
+    $sauce = Sauce::findOrFail($id);
+
+    if ($validated['like'] === 1) {
+        if (!in_array($validated['userId'], $sauce->usersLiked)) {
+            $sauce->usersLiked = array_merge($sauce->usersLiked ?? [], [$validated['userId']]);
+            $sauce->likes++;
+        }
+    } elseif ($validated['like'] === -1) {
+        if (!in_array($validated['userId'], $sauce->usersDisliked)) {
+            $sauce->usersDisliked = array_merge($sauce->usersDisliked ?? [], [$validated['userId']]);
+            $sauce->dislikes++;
+        }
+    } else {
+        $sauce->usersLiked = array_diff($sauce->usersLiked ?? [], [$validated['userId']]);
+        $sauce->usersDisliked = array_diff($sauce->usersDisliked ?? [], [$validated['userId']]);
+        $sauce->likes = count($sauce->usersLiked);
+        $sauce->dislikes = count($sauce->usersDisliked);
+    }
+
+    $sauce->save();
+
+    return response()->json(['message' => 'Sauce like/dislike updated successfully']);
+}
 }
