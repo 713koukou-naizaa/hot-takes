@@ -36,16 +36,25 @@ class SauceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'sauce' => 'required|string',
-            'image' => 'required|file|mimes:jpeg,png,jpg,gif',
+            'userId' => 'required|string',
+            'name' => 'required|string',
+            'manufacturer' => 'required|string',
+            'description' => 'required|string',
+            'mainPepper' => 'required|string',
+            'heat' => 'required|integer|min:1|max:10',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,gif',
         ]);
     
-        $sauceData = json_decode($validated['sauce'], true);
-        $sauceData['imageUrl'] = $request->file('image')->store('images', 'public');
+        $sauceData = $validated;
+    
+        // Handle image upload if provided
+        if ($request->hasFile('image')) {
+            $sauceData['imageUrl'] = $request->file('image')->store('images', 'public');
+        }
     
         $sauce = Sauce::create($sauceData);
     
-        return response()->json(['message' => 'Sauce created successfully'], 201);
+        return response()->json(['message' => 'Sauce created successfully', 'sauce' => $sauce], 201);
     }
 
     /**
