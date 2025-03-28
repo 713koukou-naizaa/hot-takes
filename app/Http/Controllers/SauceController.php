@@ -61,8 +61,6 @@ class SauceController extends Controller
      */
     public function update(Request $request, Sauce $sauce)
     {
-        $sauce = Sauce::findOrFail($id);
-
         if ($request->has('sauce')) {
             $sauceData = json_decode($request->input('sauce'), true);
             $sauce->update($sauceData);
