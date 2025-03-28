@@ -14,6 +14,12 @@ class SauceController extends Controller
     {
         $sauces = Sauce::all();
         return response()->json($sauces);
+
+/*         if ($request->wantsJson()) {
+            return response()->json($sauces);
+        }
+    
+        return view('sauces.index', compact('sauces')); */
     }
 
     /**
