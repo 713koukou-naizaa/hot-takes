@@ -26,14 +26,14 @@ curl -X POST http://127.0.0.1:8000/api/auth/login \
 
 ```bash
 curl -X GET http://127.0.0.1:8000/api/sauces \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386"
+-H "Authorization: Bearer loginToken"
 ```
 
 ### Get Sauce by ID
 
 ```bash
 curl -X GET http://127.0.0.1:8000/api/sauces/{id} \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386"
+-H "Authorization: Bearer loginToken"
 ```
 
 ### Create Sauce
@@ -41,7 +41,7 @@ curl -X GET http://127.0.0.1:8000/api/sauces/{id} \
 ```bash
 curl -X POST http://127.0.0.1:8000/api/sauces \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386" \
+-H "Authorization: Bearer loginToken" \
 -d '{
     "userId": "1",
     "name": "Simple Sauce",
@@ -57,7 +57,7 @@ curl -X POST http://127.0.0.1:8000/api/sauces \
 ```bash
 curl -X PUT http://127.0.0.1:8000/api/sauces/{id} \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386" \
+-H "Authorization: Bearer loginToken" \
 -d '{
     "userId": "1",
     "name": "Simple Sauce",
@@ -72,7 +72,7 @@ curl -X PUT http://127.0.0.1:8000/api/sauces/{id} \
 
 ```bash
 curl -X DELETE http://127.0.0.1:8000/api/sauces/{id} \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386"
+-H "Authorization: Bearer loginToken"
 ```
 
 ## Like Sauce
@@ -80,7 +80,7 @@ curl -X DELETE http://127.0.0.1:8000/api/sauces/{id} \
 ```bash
 curl -X POST http://127.0.0.1:8000/api/sauces/{id}/like \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386" \
+-H "Authorization: Bearer loginToken" \
 -d '{
     "like": 1
 }'
@@ -91,7 +91,7 @@ curl -X POST http://127.0.0.1:8000/api/sauces/{id}/like \
 ```bash
 curl -X POST http://127.0.0.1:8000/api/sauces/{id}/like \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer 3|HeJc0M6dMIr5pSaJiJP9zmASrzW9xZEtqPflycpz9c6af386" \
+-H "Authorization: Bearer loginToken" \
 -d '{
     "like": -1
 }'
